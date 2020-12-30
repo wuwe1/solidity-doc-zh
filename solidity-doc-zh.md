@@ -156,8 +156,6 @@
     - Solidity Brand Guide: 不打算翻译
     - Keyword Index: 不打算翻译
 
-这个文档放在[notion](https://www.notion.so/The-Little-Soliditier-d676ff77f7ff4259a64e41210cef79a9)上，欢迎大家阅读
-
 
 ## 安全相关的总结
 ### solidity 中有几种转移 ether 的方式？
