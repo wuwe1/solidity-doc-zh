@@ -1,4 +1,5 @@
-#[solidity-doc-zh](https://github.com/wuwe1/solidity-doc-zh/blob/main/solidity-doc-zh.md)
+# [solidity-doc-zh](https://github.com/wuwe1/solidity-doc-zh/blob/main/solidity-doc-zh.md)
+
 这是[wuwe1](wuwe1.com)翻译的Solidity文档，基本按照[solidity官方文档](https://docs.soliditylang.org/en/v0.8.0/index.html)的顺序翻译，但是添加了诸如EVM和一些和安全相关的一些章节，这些章节会随着我的学习慢慢丰富起来。翻译力求通顺，我尽量做到指代是明确的。我认为不管是针对以太坊生态的安全还是开发的学习，solidity都是很重要的一个工具，solidity本身是对EVM的一层抽象，如果在阅读文档的时候读到了一些和EVM相关的知识无法理解，最好还是先去补充一下EVM的相关知识。
 
 我推荐的EVM学习博客列在下面
