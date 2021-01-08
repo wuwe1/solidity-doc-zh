@@ -3,6 +3,7 @@
 - [介绍](#介绍)
 - [安全相关的总结](#安全相关的总结)
     - [solidity 中有几种转移 ether 的方式？](#solidity-中有几种转移-ether-的方式)
+    - [哪些操作可以消耗掉所有的gas](#哪些操作可以消耗掉所有的gas)
 - [evm](#evm)
     - [mload(0x40)是什么意思?](#mload0x40是什么意思)
 - [internals 内部原理](#internals-内部原理)
@@ -114,6 +115,13 @@
 - [Diving Into The Ethereum VM Part 5 - The Smart Contract Creation Process](https://medium.com/@hayeah/diving-into-the-ethereum-vm-part-5-the-smart-contract-creation-process-cb7b6133b855)
 - [Diving Into The Ethereum VM Part 6 - How Solidity Events Are Implemented](https://blog.qtum.org/how-solidity-events-are-implemented-diving-into-the-ethereum-vm-part-6-30e07b3037b9)
 
+- [Deconstructing a Solidity Contract — Part I: Introduction](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-i-introduction-832efd2d7737/)
+- [Deconstructing a Solidity Contract — Part II: Creation vs. Runtime](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-ii-creation-vs-runtime-6b9d60ecb44c/)
+- [Deconstructing a Solidity Contract — Part III: The Function Selector](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-iii-the-function-selector-6a9b6886ea49/)
+- [Deconstructing a Solidity Contract — Part IV: Function Wrappers](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-iv-function-wrappers-d8e46672b0ed/)
+- [Deconstructing a Solidity Contract — Part V: Function Bodies](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-v-function-bodies-2d19d4bef8be/)
+- [Deconstructing a Solidity Contract — Part VI: The Metadata Hash](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-vi-the-swarm-hash-70f069e22aef/)
+
 目前来说，文档翻译自`0.8.0`版本的文档，其中每个条目的翻译情况如下
 
 - BASICS 基本信息
@@ -170,6 +178,12 @@
 最后一条和solidity关系不大，通过指定`coinbase transaction`的接受者为某个合约地址，也可以给合约打钱，也就是挖矿的收款人的意思
 
 
+### 哪些操作可以消耗掉所有的gas
+导致Panic异常的操作，比如`assert(false)`
+
+见[异常处理如何进行的](#异常处理如何进行的)
+
+
 ## evm
 [我整理的OPCODE表格](https://www.notion.so/EVM-OPCODES-YUL-INSTRUCTIONS-b65ebd1477f54ce1b77d93ee7ddfdeab)
 
@@ -180,6 +194,20 @@
 
 ### mload(0x40)是什么意思?
 evm 中的 memory 里的 0x40 这个 slot 是一个特殊的 slot, 被称为`free memory pointer` 他会指向最新被分配的内存的最后一个位置，所以你每次写入内存的时候只要用这个`pointer`就可以往新的内存里写东西了
+
+细心的你应该可以看到所有的EVM字节码都是由`6080604052`开始的
+
+对这一小段字节码反汇编之后就是
+
+```
+00000: PUSH1 0x80
+00002: PUSH1 0x40
+00004: MSTORE
+```
+
+也就是`mstore(0x40, 0x80)`，即在内存的`0x40`存放32个字节的值，这个值是`0x80`
+
+也就是说每次自由内存指针都会初始化为`0x80`。那么在`0x00`到`0x40`之间有啥呢，答案是是啥都没有，这是solidity保留来进行哈希计算的，在使用mapping和其他的动态类型的时候会用到。
 
 
 ## internals 内部原理
@@ -1726,7 +1754,7 @@ contract VendingMachine {
 }
 ```
 
-`0.4.13`的时候与`revert`有相同语义的`throw`被废弃了，被在`0.5.0`之后被移除了
+`0.4.13`的时候与`revert`有相同语义的`throw`被废弃了，在`0.5.0`之后被移除了
 
 这里的错误信息这个string会被ABI编码，就好像是对函数`Error(string)`进行了调用一样，在上面的例子里，`revert("Not enough Ether provided.")`会被编码成如下的错误数据
 
