@@ -2965,6 +2965,13 @@ solidity编译器自动生成合约元数据的JSON文件，包含了被编译�
 
 
 ### 字节码中的元数据哈希的编码
+元数据一般是编译完之后编译器追加在runtime代码的末尾的
+
+![](https://tva1.sinaimg.cn/large/008eGmZEly1gmgqdojm1yj30jg048mxk.jpg)
+
+你在反汇编的时候如果看到了`LOG1`后面跟着`PUSH6`大概率就是看到了元数据被反汇编的结果，元数据不是用来执行的，只是一堆数据而已
+
+
 因为未来可能会支持其他的获取元数据文件的方式，`{"ipfs": <IPFS hash>, "solc": <compiler version>}`是用[CBOR编码](https://tools.ietf.org/html/rfc7049)的方式存储的。这个映射可能包含更多的键并且编码的开始不容易找到。当前版本的solidity编译器通常添加如下的字节码在部署的字节码的末尾
 
 ```
